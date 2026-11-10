@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Pembelajaran PJOK - JUMADIL</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        nunito: ['Nunito', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            user-select: none;
+        }
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Fredoka', sans-serif;
+        }
+        /* Canvas Three.js background */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+        /* Glassmorphism utility */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(74, 222, 128, 0.3);
+        }
+        .glass-nav {
+            background: rgba(240, 253, 244, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid #22c55e;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #dcfce7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #16a34a;
+            border-radius: 9999px;
+        }
+        .btn-bounce:hover {
+            transform: translateY(-3px) scale(1.02);
+        }
+        .btn-bounce:active {
+            transform: translateY(1px) scale(0.98);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-emerald-100 via-green-50 to-teal-200 min-h-screen flex flex-col text-slate-800 overflow-x-hidden relative">
+
+    <!-- Canvas Background 3D -->
+    <div id="canvas-container"></div>
+
+    <!-- HEADER / HUD TOP BAR -->
+    <header class="sticky top-0 z-40 glass-nav shadow-sm px-4 py-2.5 flex items-center justify-between transition-all">
+        <div class="flex items-center space-x-3">
+            <div class="bg-gradient-to-tr from-green-600 to-emerald-400 text-white w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg shadow-green-300">
+                <i class="fa-solid fa-futbol text-lg"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-green-700 text-base md:text-lg leading-tight">PJOK KELAS X</h1>
+                <p class="text-xs font-semibold text-green-800/80">By JUMADIL</p>
+            </div>
+        </div>
+
+        <!-- Global Navigation Bar (Halaman 7) -->
+        <nav id="global-nav-bar" class="hidden lg:flex items-center space-x-2 bg-white/70 p-1.5 rounded-2xl border border-green-200 shadow-inner">
+            <button onclick="navigateTo(3)" class="nav-link-btn px-3 py-1.5 rounded-xl text-xs font-bold text-green-800 hover:bg-green-600 hover:text-white transition flex items-center gap-1.5">
+                <i class="fa-solid fa-book-open"></i> MATERI PEMBELAJARAN
+            </button>
+            <button onclick="navigateTo(4)" class="nav-link-btn px-3 py-1.5 rounded-xl text-xs font-bold text-green-800 hover:bg-green-600 hover:text-white transition flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-play"></i> VIDEO DAN SIMULASI PEMBELAJARAN
+            </button>
+            <button onclick="navigateTo(5)" class="nav-link-btn px-3 py-1.5 rounded-xl text-xs font-bold text-green-800 hover:bg-green-600 hover:text-white transition flex items-center gap-1.5">
+                <i class="fa-solid fa-pen-to-square"></i> LATIHAN SOAL DAN KUIS
+            </button>
+            <button onclick="navigateTo(6)" class="nav-link-btn px-3 py-1.5 rounded-xl text-xs font-bold text-green-800 hover:bg-green-600 hover:text-white transition flex items-center gap-1.5">
+                <i class="fa-solid fa-clipboard-check"></i> EVALUASI
+            </button>
+        </nav>
+
+        <!-- BGM & Rekap Quick Access -->
+        <div class="flex items-center space-x-2">
+            <button id="bgm-toggle-btn" onclick="toggleBGM()" class="bg-green-100 hover:bg-green-200 text-green-800 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 border border-green-300 transition shadow-sm">
+                <i id="bgm-icon" class="fa-solid fa-music text-green-600"></i>
+                <span id="bgm-text">Musik: OFF</span>
+            </button>
+            <button onclick="openRekapModal()" class="bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 shadow-md transition btn-bounce">
+                <i class="fa-solid fa-table"></i>
+                <span class="hidden sm:inline">Rekap Spreadsheet</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 relative z-10 container mx-auto px-4 py-6 flex flex-col justify-center items-center">
+
+        <!-- PAGE 0: WELCOME SCREEN -->
+        <section id="page-0" class="w-full max-w-2xl text-center flex flex-col items-center justify-center space-y-6 py-8">
+            <div class="glass-card p-8 sm:p-10 rounded-3xl shadow-2xl border-4 border-green-400 w-full animate-fade-in relative overflow-hidden">
+                <div class="absolute -top-12 -right-12 w-32 h-32 bg-green-300/40 rounded-full blur-2xl"></div>
+                <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-teal-300/40 rounded-full blur-2xl"></div>
+
+                <div class="inline-block p-4 bg-green-100 text-green-700 rounded-full mb-4 shadow-inner">
+                    <i class="fa-solid fa-futbol text-5xl"></i>
+                </div>
+                
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-green-700 mb-3 tracking-wide">
+                    Selamat Datang di Media Pembelajaran milik
+                </h2>
+                <div class="bg-gradient-to-r from-green-600 to-emerald-600 text-white font-black text-xl sm:text-2xl py-2.5 px-8 rounded-2xl shadow-lg inline-block mb-4 tracking-wider">
+                    JUMADIL
+                </div>
+                <p class="text-slate-600 text-sm sm:text-base font-semibold mb-8 max-w-lg mx-auto">
+                    Mari pelajari dan kuasai Gerak Dasar Permainan Sepak Bola secara interaktif, sehat, dan menyenangkan!
+                </p>
+
+                <button onclick="navigateTo(1)" class="w-full sm:w-auto bg-gradient-to-r from-green-600 via-emerald-600 to-teal-700 hover:from-green-700 hover:to-teal-800 text-white font-black text-lg px-10 py-4 rounded-2xl shadow-xl hover:shadow-green-400/50 transition-all btn-bounce flex items-center justify-center gap-3 mx-auto">
+                    <span>GABUNG</span>
+                    <i class="fa-solid fa-arrow-right-long"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- PAGE 1: BERANDA -->
+        <section id="page-1" class="hidden w-full max-w-3xl flex-col items-center justify-center py-4">
+            <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-2xl w-full border-2 border-green-300 text-center relative">
+                <!-- Watermark / Branding -->
+                <div class="flex items-center justify-center gap-2 mb-4">
+                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider">Mata Pelajaran PJOK</span>
+                    <span class="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider">Kelas X</span>
+                </div>
+
+                <h2 class="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-700 via-emerald-600 to-teal-700 mb-2">
+                    GERAK DASAR PERMAINAN SEPAK BOLA
+                </h2>
+                <p class="text-slate-600 font-semibold mb-6">Guru Pengampu: <span class="text-green-700 font-bold">JUMADIL</span></p>
+
+                <!-- Motivational Quotes Widget Versi Anak PJOK -->
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-2xl border border-green-200 mb-8 text-left relative">
+                    <div class="flex items-start gap-3">
+                        <i class="fa-solid fa-quote-left text-2xl text-green-500"></i>
+                        <div>
+                            <p id="quote-text" class="italic text-slate-700 font-semibold text-sm sm:text-base mb-1">
+                                "Di dalam tubuh yang sehat terdapat jiwa yang kuat! Terus berlatih, disiplin, dan pantang menyerah di lapangan!"
+                            </p>
+                            <span class="text-xs text-green-700 font-bold block">— Motivasi Anak PJOK</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-green-100">
+                    <button onclick="navigateTo(0)" class="w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-6 py-3 rounded-xl transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> BACK
+                    </button>
+                    <button onclick="navigateTo(2)" class="w-full sm:w-auto bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-black px-8 py-3.5 rounded-xl shadow-lg transition btn-bounce flex items-center justify-center gap-2">
+                        <span>MULAI</span>
+                        <i class="fa-solid fa-circle-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 2: MENU UTAMA -->
+        <section id="page-2" class="hidden w-full max-w-4xl py-4">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-black text-green-700 mb-2">MENU PEMBELAJARAN</h2>
+                <p class="text-slate-600 font-semibold text-sm">Pilih modul di bawah untuk memulai pembelajaran sepak bola!</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Card 1: Materi -->
+                <div onclick="navigateTo(3)" class="glass-card p-6 rounded-3xl shadow-xl hover:shadow-2xl transition cursor-pointer border-2 border-green-200 hover:border-green-500 group btn-bounce flex items-center space-x-4">
+                    <div class="w-16 h-16 rounded-2xl bg-green-600 text-white flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-green-800 group-hover:text-green-600">MATERI PEMBELAJARAN</h3>
+                        <p class="text-slate-500 text-xs mt-1">8 slide materi lengkap gerak dasar sepak bola disertai gambaran & rangkuman.</p>
+                    </div>
+                </div>
+
+                <!-- Card 2: Video & Simulasi -->
+                <div onclick="navigateTo(4)" class="glass-card p-6 rounded-3xl shadow-xl hover:shadow-2xl transition cursor-pointer border-2 border-emerald-200 hover:border-emerald-500 group btn-bounce flex items-center space-x-4">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition">
+                        <i class="fa-solid fa-film"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-emerald-800 group-hover:text-emerald-600">VIDEO DAN SIMULASI PEMBELAJARAN</h3>
+                        <p class="text-slate-500 text-xs mt-1">Video animasi interaktif & simulasi arah tendangan serta kontrol bola.</p>
+                    </div>
+                </div>
+
+                <!-- Card 3: Latihan Soal & Kuis -->
+                <div onclick="navigateTo(5)" class="glass-card p-6 rounded-3xl shadow-xl hover:shadow-2xl transition cursor-pointer border-2 border-teal-200 hover:border-teal-500 group btn-bounce flex items-center space-x-4">
+                    <div class="w-16 h-16 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition">
+                        <i class="fa-solid fa-pen-ruler"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-teal-800 group-hover:text-teal-600">LATIHAN SOAL DAN KUIS</h3>
+                        <p class="text-slate-500 text-xs mt-1">10 Soal Pilihan Ganda & 5 Soal Uraian Kategori HOTS.</p>
+                    </div>
+                </div>
+
+                <!-- Card 4: Evaluasi & Refleksi -->
+                <div onclick="navigateTo(6)" class="glass-card p-6 rounded-3xl shadow-xl hover:shadow-2xl transition cursor-pointer border-2 border-lime-200 hover:border-lime-500 group btn-bounce flex items-center space-x-4">
+                    <div class="w-16 h-16 rounded-2xl bg-lime-600 text-white flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-lime-800 group-hover:text-lime-600">EVALUASI</h3>
+                        <p class="text-slate-500 text-xs mt-1">5 Soal Essai refleksi pemahaman & pesan untuk Bapak JUMADIL.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-center">
+                <button onclick="navigateTo(1)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-6 py-2.5 rounded-xl transition flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda
+                </button>
+            </div>
+        </section>
+
+        <!-- PAGE 3: MATERI PEMBELAJARAN (8 SLIDES) -->
+        <section id="page-3" class="hidden w-full max-w-4xl py-2">
+            <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-2xl relative min-h-[500px] flex flex-col justify-between">
+                <!-- Slide Header -->
+                <div class="flex items-center justify-between border-b border-green-200 pb-4 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-green-600 text-white font-bold px-3 py-1 rounded-xl text-xs" id="slide-number-badge">Slide 1 dari 8</span>
+                        <h3 class="font-extrabold text-green-800 text-lg sm:text-xl" id="slide-title">1. Pengertian & Hakikat Permainan Sepak Bola</h3>
+                    </div>
+                    <button onclick="navigateTo(2)" class="text-slate-400 hover:text-green-600 text-sm font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-grid-2"></i> Menu
+                    </button>
+                </div>
+
+                <!-- Slide Body Content -->
+                <div id="slide-content-area" class="flex-1 my-2">
+                    <!-- Dynamic Content Injected by JS -->
+                </div>
+
+                <!-- Slide Controls Navigation -->
+                <div class="flex items-center justify-between border-t border-green-200 pt-4 mt-4">
+                    <button id="slide-prev-btn" onclick="changeSlide(-1)" class="bg-green-100 hover:bg-green-200 text-green-800 font-bold px-5 py-2.5 rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-chevron-left"></i> BACK
+                    </button>
+                    
+                    <!-- Slide Indicators -->
+                    <div id="slide-dots" class="hidden sm:flex items-center space-x-1.5">
+                        <!-- Dots by JS -->
+                    </div>
+
+                    <button id="slide-next-btn" onclick="changeSlide(1)" class="bg-green-600 hover:bg-green-700 text-white font-bold px-5 py-2.5 rounded-xl shadow transition flex items-center gap-2">
+                        <span>NEXT</span> <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 4: VIDEO ANIMASI & SIMULASI -->
+        <section id="page-4" class="hidden w-full max-w-4xl py-2">
+            <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-2xl space-y-6">
+                <div class="border-b border-green-200 pb-3 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-black text-green-700">VIDEO ANIMASI & SIMULASI INTERAKTIF</h2>
+                        <p class="text-slate-600 text-xs">Materi: Gerak Dasar Sepak Bola (Menendang, Mengontrol, Dribbling, & Shooting)</p>
+                    </div>
+                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full">Durasi Video &gt; 1 Menit</span>
+                </div>
+
+                <!-- Custom Canvas Animated Video Component -->
+                <div class="bg-slate-900 rounded-2xl overflow-hidden shadow-2xl relative">
+                    <div class="relative w-full aspect-video flex items-center justify-center">
+                        <canvas id="video-canvas" class="w-full h-full object-cover"></canvas>
+                        
+                        <!-- Video Controls Overlay -->
+                        <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-center justify-between text-white text-xs">
+                            <button id="vid-play-btn" onclick="toggleSimVideo()" class="bg-green-500 hover:bg-green-600 text-white p-2 w-9 h-9 rounded-full flex items-center justify-center transition">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                            <div class="flex-1 mx-3">
+                                <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden cursor-pointer" onclick="seekVideo(event)">
+                                    <div id="vid-progress" class="bg-green-500 h-full w-0 transition-all"></div>
+                                </div>
+                            </div>
+                            <span id="vid-timer" class="font-mono text-slate-300">00:00 / 01:15</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulation Interactive Tool -->
+                <div class="bg-green-50/70 rounded-2xl p-5 border border-green-200">
+                    <h3 class="font-bold text-green-800 text-lg mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders"></i> SIMULASI INTERAKTIF: Akurasi & Power Tendangan Bola
+                    </h3>
+                    <p class="text-slate-600 text-xs mb-4">Atur sudut kaki dan kekuatan tendangan untuk melatih simulasi menendang bola tepat sasaran ke gawang!</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="bg-white p-3 rounded-xl border border-green-200 text-center">
+                            <label class="block text-xs font-bold text-slate-500 mb-1">Sudut Perkenaan Kaki (°)</label>
+                            <input type="range" id="sim-angle" min="0" max="90" value="45" oninput="updateSim()" class="w-full accent-green-600">
+                            <span id="val-angle" class="font-black text-green-700 text-lg">45°</span>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-green-200 text-center">
+                            <label class="block text-xs font-bold text-slate-500 mb-1">Kekuatan Tendangan (Power %)</label>
+                            <input type="range" id="sim-power" min="10" max="100" value="70" oninput="updateSim()" class="w-full accent-emerald-600">
+                            <span id="val-power" class="font-black text-emerald-700 text-lg">70%</span>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-green-200 text-center">
+                            <label class="block text-xs font-bold text-slate-500 mb-1">Jarak ke Gawang (Meter)</label>
+                            <input type="range" id="sim-dist" min="5" max="35" value="16" oninput="updateSim()" class="w-full accent-teal-600">
+                            <span id="val-dist" class="font-black text-teal-700 text-lg">16m</span>
+                        </div>
+                    </div>
+
+                    <!-- Output Simulation Indicator -->
+                    <div class="bg-white p-4 rounded-xl border border-green-300 flex flex-col sm:flex-row justify-between items-center gap-3">
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Hasil Analisis Tendangan</span>
+                            <span id="sim-status" class="font-black text-base text-green-700">GOAL! Tendangan Tepat Masuk ke Sudut Gawang!</span>
+                        </div>
+                        <button onclick="resetSim()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold px-3 py-2 rounded-lg transition">
+                            <i class="fa-solid fa-rotate-right"></i> Reset Simulasi
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Page Navigation Buttons -->
+                <div class="flex justify-between items-center pt-2">
+                    <button onclick="navigateTo(3)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-6 py-2.5 rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> BACK
+                    </button>
+                    <button onclick="navigateTo(5)" class="bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-2.5 rounded-xl shadow transition flex items-center gap-2 btn-bounce">
+                        <span>NEXT</span> <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 5: LATIHAN SOAL & KUIS -->
+        <section id="page-5" class="hidden w-full max-w-4xl py-2">
+            <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-2xl space-y-6">
+                <div class="border-b border-green-200 pb-3">
+                    <h2 class="text-2xl font-black text-green-700">LATIHAN SOAL DAN KUIS INTERAKTIF</h2>
+                    <p class="text-slate-600 text-xs">Silakan isi identitas terlebih dahulu untuk membuka lembar soal.</p>
+                </div>
+
+                <!-- User Identity Input Card -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-green-50/80 p-4 rounded-2xl border border-green-200">
+                    <div>
+                        <label class="block text-xs font-bold text-green-800 mb-1">NAMA LENGKAP SISWA *</label>
+                        <input type="text" id="user-name" placeholder="Masukkan nama kamu..." class="w-full px-4 py-2.5 rounded-xl border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500 font-semibold text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-green-800 mb-1">KELAS *</label>
+                        <select id="user-class" class="w-full px-4 py-2.5 rounded-xl border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500 font-semibold text-sm">
+                            <option value="X-1">Kelas X - 1</option>
+                            <option value="X-2">Kelas X - 2</option>
+                            <option value="X-3">Kelas X - 3</option>
+                            <option value="X-4">Kelas X - 4</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Section A: 10 Multiple Choice Questions -->
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between bg-green-600 text-white p-3 rounded-xl shadow">
+                        <h3 class="font-bold text-sm sm:text-base">BAGIAN I: 10 Soal Pilihan Ganda (5 Pilihan Jawaban)</h3>
+                        <span class="text-xs bg-white text-green-700 px-2.5 py-1 rounded-lg font-bold">Bobot: 10 Poin / Soal</span>
+                    </div>
+
+                    <div id="pg-container" class="space-y-6">
+                        <!-- Questions 1-10 Injected Dynamically by JS -->
+                    </div>
+                </div>
+
+                <!-- Section B: 5 HOTS Essay Quiz Questions -->
+                <div class="space-y-6 pt-4 border-t border-green-200">
+                    <div class="flex items-center justify-between bg-emerald-700 text-white p-3 rounded-xl shadow">
+                        <h3 class="font-bold text-sm sm:text-base">BAGIAN II: 5 Soal Uraian / Kuis HOTS</h3>
+                        <span class="text-xs bg-white text-emerald-700 px-2.5 py-1 rounded-lg font-bold">Kategori HOTS</span>
+                    </div>
+
+                    <div id="hots-container" class="space-y-6">
+                        <!-- HOTS Questions Injected Dynamically by JS -->
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="pt-4 border-t border-green-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <button onclick="navigateTo(4)" class="w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-6 py-2.5 rounded-xl transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> BACK
+                    </button>
+                    <div class="flex w-full sm:w-auto gap-3">
+                        <button onclick="submitQuiz()" class="flex-1 sm:flex-none bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-black px-8 py-3 rounded-xl shadow-lg transition btn-bounce flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> KIRIM JAWABAN KUIS
+                        </button>
+                        <button onclick="navigateTo(6)" class="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-3 rounded-xl shadow transition flex items-center justify-center gap-2">
+                            <span>NEXT</span> <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 6: EVALUASI DAN REFLEKSI -->
+        <section id="page-6" class="hidden w-full max-w-4xl py-2">
+            <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-2xl space-y-6">
+                <div class="border-b border-green-200 pb-3">
+                    <h2 class="text-2xl font-black text-green-700">EVALUASI DAN REFLEKSI PEMBELAJARAN</h2>
+                    <p class="text-slate-600 text-xs">Jawablah 5 soal evaluasi berikut untuk menguji pemahaman mendalam kamu.</p>
+                </div>
+
+                <!-- Identity Confirmation -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-emerald-50 p-4 rounded-2xl border border-emerald-200">
+                    <div>
+                        <label class="block text-xs font-bold text-emerald-800 mb-1">NAMA SISWA</label>
+                        <input type="text" id="eval-name" placeholder="Nama siswa..." class="w-full px-4 py-2 rounded-xl border border-emerald-300 font-semibold text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-emerald-800 mb-1">KELAS</label>
+                        <input type="text" id="eval-class" placeholder="Kelas..." class="w-full px-4 py-2 rounded-xl border border-emerald-300 font-semibold text-sm">
+                    </div>
+                </div>
+
+                <!-- 5 Evaluation Essay Questions -->
+                <div id="eval-essay-container" class="space-y-5">
+                    <!-- Injected by JS -->
+                </div>
+
+                <!-- Pesan Untuk Guruku -->
+                <div class="bg-gradient-to-r from-green-100 to-emerald-100 p-5 rounded-2xl border-2 border-green-300 space-y-2">
+                    <label class="block text-sm font-black text-green-800 flex items-center gap-2">
+                        <i class="fa-solid fa-heart text-green-600"></i> PESAN UNTUK GURUKU (Bapak JUMADIL)
+                    </label>
+                    <p class="text-slate-600 text-xs">Tuliskan kesan, pesan, atau masukan untuk pembelajaran PJOK hari ini:</p>
+                    <textarea id="pesan-guru" rows="3" placeholder="Tuliskan pesan dan kesanmu untuk Pak Jumadil di sini..." class="w-full p-3 rounded-xl border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500 font-semibold text-sm"></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-between items-center pt-2">
+                    <button onclick="navigateTo(5)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-6 py-2.5 rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> BACK
+                    </button>
+                    <button onclick="submitEvaluasi()" class="bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-black px-8 py-3.5 rounded-xl shadow-xl transition btn-bounce flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i> KUMPULKAN JAWABAN
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="relative z-10 text-center py-4 text-xs font-bold text-green-800 bg-white/40 backdrop-blur-sm border-t border-green-200">
+        Media Pembelajaran PJOK Interaktif © JUMADIL - SMA / SMAN PJOK
+    </footer>
+
+    <!-- REKAP SPREADSHEET MODAL (Halaman 8) -->
+    <div id="rekap-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-5xl max-h-[90vh] rounded-3xl p-6 shadow-2xl flex flex-col overflow-hidden border-4 border-green-400">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between border-b border-green-200 pb-4 mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-emerald-600 text-white w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow">
+                        <i class="fa-solid fa-file-excel"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-slate-800 text-lg sm:text-xl">REKAP NILAI SISWA & EKSPOR SPREADSHEET</h3>
+                        <p class="text-xs text-slate-500">Tersimpan otomatis secara offline & siap sinkronisasi online</p>
+                    </div>
+                </div>
+                <button onclick="closeRekapModal()" class="text-slate-400 hover:text-rose-500 text-2xl font-bold">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Stats Summary Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                <div class="bg-green-50 p-3 rounded-2xl border border-green-200 text-center">
+                    <span class="text-xs font-bold text-slate-500 block">Total Aktivitas</span>
+                    <span id="stat-total-act" class="text-xl font-black text-green-700">0</span>
+                </div>
+                <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-200 text-center">
+                    <span class="text-xs font-bold text-slate-500 block">Jawaban Benar</span>
+                    <span id="stat-correct-ans" class="text-xl font-black text-emerald-600">0</span>
+                </div>
+                <div class="bg-teal-50 p-3 rounded-2xl border border-teal-200 text-center">
+                    <span class="text-xs font-bold text-slate-500 block">Rata-rata Skor</span>
+                    <span id="stat-avg-score" class="text-xl font-black text-teal-600">0</span>
+                </div>
+                <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200 text-center">
+                    <span class="text-xs font-bold text-slate-500 block">Siswa Terdaftar</span>
+                    <span id="stat-student-count" class="text-xl font-black text-amber-600">0</span>
+                </div>
+            </div>
+
+            <!-- Webhook Google Apps Script Integration Config -->
+            <div class="bg-slate-100 p-3 rounded-2xl border border-slate-300 mb-4 text-xs space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="font-extrabold text-slate-700 flex items-center gap-1.5">
+                        <i class="fa-solid fa-link text-emerald-600"></i> Auto-Sync Webhook Google Apps Script URL:
+                    </span>
+                    <button onclick="copyAppsScriptCode()" class="bg-green-700 hover:bg-green-800 text-white font-bold px-2.5 py-1 rounded-lg transition text-[11px]">
+                        <i class="fa-solid fa-code"></i> Salin Kode Apps Script
+                    </button>
+                </div>
+                <div class="flex gap-2">
+                    <input type="text" id="webhook-url-input" placeholder="Paste URL Web App Apps Script di sini (https://script.google.com/macros/s/.../exec)" class="flex-1 px-3 py-1.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-xs">
+                    <button onclick="saveWebhookURL()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-1.5 rounded-xl transition">
+                        Simpan URL
+                    </button>
+                </div>
+            </div>
+
+            <!-- Export Features Buttons -->
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <span class="text-xs font-bold text-slate-600">Tabel Rekap Data Real-time:</span>
+                <div class="flex items-center gap-2">
+                    <button onclick="exportToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow transition">
+                        <i class="fa-solid fa-file-csv"></i> Download Excel (.CSV)
+                    </button>
+                    <button onclick="copyTableToClipboard()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow transition">
+                        <i class="fa-solid fa-copy"></i> Salin Tabel (Copy-Paste)
+                    </button>
+                    <button onclick="clearRekapData()" class="bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold px-3 py-1.5 rounded-xl text-xs transition">
+                        <i class="fa-solid fa-trash"></i> Hapus Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="flex-1 overflow-auto border border-green-200 rounded-2xl bg-white">
+                <table id="rekap-table" class="w-full text-left text-xs text-slate-700">
+                    <thead class="bg-green-100 text-green-900 font-bold sticky top-0 border-b border-green-200">
+                        <tr>
+                            <th class="p-2.5">Waktu</th>
+                            <th class="p-2.5">Kelas</th>
+                            <th class="p-2.5">Nama Siswa</th>
+                            <th class="p-2.5">Teks Pertanyaan</th>
+                            <th class="p-2.5">Jawaban Siswa</th>
+                            <th class="p-2.5">Kunci Jawaban</th>
+                            <th class="p-2.5">Status</th>
+                            <th class="p-2.5">Poin</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rekap-table-body" class="divide-y divide-slate-100 font-medium">
+                        <!-- Injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION MODAL CUSTOM (No alert()) -->
+    <div id="msg-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl border-2 border-green-300 space-y-4">
+            <div id="msg-icon-bg" class="w-14 h-14 bg-green-100 text-green-700 rounded-2xl flex items-center justify-center text-2xl mx-auto">
+                <i id="msg-icon" class="fa-solid fa-circle-info"></i>
+            </div>
+            <h4 id="msg-title" class="font-extrabold text-slate-800 text-lg">Informasi</h4>
+            <p id="msg-text" class="text-xs text-slate-600 font-semibold"></p>
+            <button onclick="closeMsgModal()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-xl transition">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* ==========================================================================
+           1. STATE MANAGEMENT & DATA STORAGE
+           ========================================================================== */
+        let currentPage = 0;
+        let currentSlide = 0;
+        let rekapRecords = JSON.parse(localStorage.getItem('pjok_rekap_db') || '[]');
+        let webhookScriptURL = localStorage.getItem('pjok_webhook_url') || '';
+
+        // Material Slides Data (8 Slides) PJOK - Gerak Dasar Sepak Bola
+        const slidesData = [
+            {
+                title: "1. Pengertian & Hakikat Gerak Dasar Sepak Bola",
+                badge: "Konsep Dasar",
+                icon: "fa-futbol",
+                desc: "Sepak bola adalah permainan berberegu yang mengutamakan kerja sama tim, keterampilan teknik dasar, serta kondisi fisik yang prima untuk memasukkan bola ke gawang lawan.",
+                points: [
+                    "Tujuan Utama: Mencetak gol ke gawang lawan dan mempertahankan gawang sendiri dari kebobolan.",
+                    "Komponen Utama: Penguasaan teknik dasar, taktik, dan kebugaran jasmani.",
+                    "Nilai Karakter: Sportivitas, kerja sama tim (teamwork), disiplin, dan pantang menyerah."
+                ],
+                summary: "Rangkuman: Gerak dasar sepak bola merupakan fondasi utama sebelum mempelajari taktik dan strategi permainan tingkat lanjut."
+            },
+            {
+                title: "2. Menendang Bola (Passing & Shooting)",
+                badge: "Teknik Kaki",
+                icon: "fa-shoe-prints",
+                desc: "Menendang bola adalah teknik mendorong bola menggunakan bagian kaki untuk mengoper (passing) atau menembak ke gawang (shooting).",
+                points: [
+                    "Kaki Bagian Dalam: Digunakan untuk umpan jarak pendek yang akurat dan terukur.",
+                    "Kaki Bagian Luar: Digunakan untuk umpan terobosan atau efek lengkung (spin).",
+                    "Punggung Kaki (Kura-kura Kaki): Digunakan untuk tendangan keras (shooting) ke gawang lawan."
+                ],
+                summary: "Rangkuman: Keseimbangan tumpuan kaki pendukung sangat menentukan akurasi dan laju kecepatan bola."
+            },
+            {
+                title: "3. Mengontrol / Menghentikan Bola (Controlling)",
+                badge: "Kontrol Bola",
+                icon: "fa-stop",
+                desc: "Teknik menerima dan menghentikan bola yang datang agar berada dalam penguasaan penuh pemain sebelum melakukan aksi berikutnya.",
+                points: [
+                    "Mengontrol Bola Menyusur Tanah: Menggunakan telapak kaki (sole) atau kaki bagian dalam.",
+                    "Mengontrol Bola Melambung: Menggunakan dada, paha, atau kura-kura kaki.",
+                    "Prinsip Utama: Meredam benturan bola (absorb impact) agar bola tidak memantul jauh dari tubuh."
+                ],
+                summary: "Rangkuman: Kontrol bola yang bagus memberikan waktu lebih bagi pemain untuk mengambil keputusan taktis."
+            },
+            {
+                title: "4. Menggiring Bola (Dribbling)",
+                badge: "Pergerakan",
+                icon: "fa-person-running",
+                desc: "Teknik membawa bola dengan sentuhan-sentuhan kecil kaki sambil bergerak menuju daerah pertahanan lawan.",
+                points: [
+                    "Dribbling Kaki Dalam & Luar: Membawa bola dengan kontrol ketat di area sempit.",
+                    "Speed Dribbling: Mendorong bola sedikit lebih jauh di area terbuka untuk memanfaatkan kecepatan berlari.",
+                    "Pandangan Mata: Tetap fokus pada bola serta selalu memperhatikan situasi posisi kawan dan lawan."
+                ],
+                summary: "Rangkuman: Menggiring bola secara efektif membutuhkan koordinasi mata-kaki dan perubahan irama lari."
+            },
+            {
+                title: "5. Menyundul Bola (Heading)",
+                badge: "Teknik Udara",
+                icon: "fa-child-reaching",
+                desc: "Menyundul bola dilakukan dengan menggunakan dahi untuk mengoper, menghalau serangan (clearing), atau mencetak gol.",
+                points: [
+                    "Perkenaan Bola: Wajib mengenai bagian dahi (perbatasan rambut), bukan ubun-ubun.",
+                    "Otot Leher: Dikencangkan dan menghentak ke depan saat menyambut bola.",
+                    "Posisi Mata: Tetap terbuka memperhatikan datangnya bola hingga kontak terjadi."
+                ],
+                summary: "Rangkuman: Menyundul bola dengan dahi memberikan arah dorongan bola yang kuat dan aman dari cidera."
+            },
+            {
+                title: "6. Lemparan ke Dalam (Throw-In)",
+                badge: "Peraturan & Teknik",
+                icon: "fa-hand-holding",
+                desc: "Cara memulai kembali permainan setelah bola keluar melewati garis samping lapangan.",
+                points: [
+                    "Posisi Tangan: Bola dipegang kedua tangan dan diayunkan melintasi atas belakang kepala.",
+                    "Posisi Kaki: Kedua kaki wajib menyentuh tanah di luar atau di atas garis samping.",
+                    "Ketentuan: Lemparan dianggap sah jika bola dilepas mengayun sempurna dari belakang kepala."
+                ],
+                summary: "Rangkuman: Lemparan ke dalam dapat dimanfaatkan sebagai awal mula serangan balasan cepat jika dieksekusi dengan baik."
+            },
+            {
+                title: "7. Teknik Menjaga Gawang (Goalkeeping)",
+                badge: "Pertahanan Khusus",
+                icon: "fa-shield-halved",
+                desc: "Keterampilan khusus yang hanya boleh dilakukan oleh kiper di dalam area penalti (penalty box).",
+                points: [
+                    "Menangkap Bola Rendah & Tinggi: Menggunakan formasi jemari W-Shape atau C-Shape.",
+                    "Nepis Bola (Tipping/Punching): Menepis bola melayang jika bola terlalu berbahaya untuk ditangkap.",
+                    "Refleks & Reaksi: Mengatur posisi berdiri (positioning) yang menutup sudut tembak lawan."
+                ],
+                summary: "Rangkuman: Kiper adalah pertahanan terakhir tim yang membutuhkan fokus, ketenangan, dan keberanian tinggi."
+            },
+            {
+                title: "8. Rangkuman & Penerapan Nilai Sportivitas",
+                badge: "Refleksi PJOK",
+                icon: "fa-award",
+                desc: "Keterampilan fisik sepak bola harus dibarengi dengan kebugaran jasmani dan penerapan nilai-nilai positif olahraga.",
+                points: [
+                    "Sportivitas: Menghormati keputusan wasit dan menghargai pemain lawan di dalam maupun luar lapangan.",
+                    "Kerja Sama: Bermain kolektif mengutamakan kemenangan tim di atas ego pribadi.",
+                    "Fair Play: Menjunjung tinggi kejujuran dan aturan main selama pertandingan berlangsung."
+                ],
+                summary: "Rangkuman: Sepak bola tidak hanya melatih jasmani, namun juga membentuk mental kepemimpinan dan nilai-nilai sportivitas."
+            }
+        ];
+
+        // 10 Multiple Choice Questions (PJOK Sepak Bola)
+        const questionsPG = [
+            {
+                q: "1. Teknik menendang bola yang paling cocok digunakan untuk memberikan umpan jarak pendek secara akurat adalah...",
+                options: ["A. Punggung Kaki", "B. Kaki Bagian Dalam", "C. Kaki Bagian Luar", "D. Ujung Jari Kaki", "E. Tumit Kaki"],
+                ans: "B. Kaki Bagian Dalam"
+            },
+            {
+                q: "2. Bagian kepala yang benar saat melakukan perkenaan menyundul bola (heading) adalah...",
+                options: ["A. Ubun-ubun", "B. Samping Kepala", "C. Dahi", "D. Belakang Kepala", "E. Dagu"],
+                ans: "C. Dahi"
+            },
+            {
+                q: "3. Saat menerima bola melambung di udara, anggota tubuh yang paling tepat untuk meredam dan menghentikan bola selain kaki adalah...",
+                options: ["A. Tangan", "B. Paha atau Dada", "C. Bahu", "D. Pinggang", "E. Lutut Samping"],
+                ans: "B. Paha atau Dada"
+            },
+            {
+                q: "4. Tujuan utama dari teknik menggiring bola (dribbling) dalam permainan sepak bola adalah...",
+                options: ["A. Membuang waktu permainan", "B. Membawa bola menuju area lawan serta melewati pertahanan", "C. Mencetak gol langsung dari tengah lapangan", "D. Melatih otot lengan", "E. Mengelabui teman satu tim"],
+                ans: "B. Membawa bola menuju area lawan serta melewati pertahanan"
+            },
+            {
+                q: "5. Di bawah ini yang merupakan syarat sah saat melakukan lemparan ke dalam (throw-in) adalah...",
+                options: ["A. Menggunakan satu tangan dari samping", "B. Melempar bola sambil melompat tinggi", "C. Bola dilempar dari atas belakang kepala dengan kedua kaki menyentuh tanah", "D. Salah satu kaki diangkat tinggi", "E. Bola dilempar dari bawah pinggang"],
+                ans: "C. Bola dilempar dari atas belakang kepala dengan kedua kaki menyentuh tanah"
+            },
+            {
+                q: "6. Pada saat melakukan tembakan keras (shooting) ke gawang lawan, bagian kaki yang paling efektif digunakan adalah...",
+                options: ["A. Telapak Kaki", "B. Punggung Kaki (Kura-kura kaki)", "C. Kaki Bagian Dalam", "D. Tumit Kaki", "E. Sisi Luar Kaki"],
+                ans: "B. Punggung Kaki (Kura-kura kaki)"
+            },
+            {
+                q: "7. Sikap tumpuan kaki saat menendang bola dengan kaki bagian dalam harus diletakkan di...",
+                options: ["A. Belakang bola jauh", "B. Depan bola sejauh 1 meter", "C. Samping bola selaras dengan arah sasaran", "D. Di atas bola", "E. Menyilang di depan bola"],
+                ans: "C. Samping bola selaras dengan arah sasaran"
+            },
+            {
+                q: "8. Sikap menghargai lawan, mematuhi keputusan wasit, dan bertanding secara jujur dalam PJOK dikenal dengan istilah...",
+                options: ["A. Individualis", "B. Aggressive Play", "C. Sportivitas (Fair Play)", "D. Taktis", "E. Defensif"],
+                ans: "C. Sportivitas (Fair Play)"
+            },
+            {
+                q: "9. Penguasaan bola dengan telapak kaki (sole control) biasanya sangat cocok diterapkan saat...",
+                options: ["A. Menghentikan bola menyusur tanah", "B. Menyundul bola melayang", "C. Merebut bola di udara", "D. Melakukan tembakan jarak jauh", "E. Melempar bola ke dalam"],
+                ans: "A. Menghentikan bola menyusur tanah"
+            },
+            {
+                q: "10. Posisi jari-jari tangan seorang kiper saat hendak menangkap bola melayang di atas kepala sebaiknya membentuk pola...",
+                options: ["A. Mengepal erat", "B. Pola huruf W atau mangkuk", "C. Lurus merapat", "D. Menyilang", "E. Terbuka lebar ke samping"],
+                ans: "B. Pola huruf W atau mangkuk"
+            }
+        ];
+
+        // 5 HOTS Quiz Questions (PJOK Sepak Bola)
+        const questionsHOTS = [
+            {
+                id: 1,
+                q: "1. ANALISIS TAKTIS: Ketika menghadapi tim lawan yang menerapkan pertahanan sangat rapat (block rendah), gerakan menggiring bola (dribbling) sering kali buntu. Menurut Anda, bagaimana kombinasi umpan satu-dua (one-two pass) dan koordinasi pergerakan tanpa bola dapat membongkar pertahanan tersebut?",
+                key: "Umpan satu-dua yang cepat memancing bek lawan keluar dari posisinya, lalu pergerakan tanpa bola memanfaatkan ruang kosong yang ditinggalkan untuk menciptakan peluang gol."
+            },
+            {
+                id: 2,
+                q: "2. BIOMEKANIKA OLAHRAGA: Mengapa saat melakukan shooting dengan punggung kaki, pergelangan kaki harus dikunci (ditekuk ke bawah secara kaku) dan posisi badan agak condong ke depan?",
+                key: "Pergelangan kaki yang dikunci menyalurkan seluruh transfer energi dari paha ke bola secara maksimal. Badan condong ke depan mencegah bola melambung jauh di atas mistar gawang."
+            },
+            {
+                id: 3,
+                q: "3. EVALUASI KESALAHAN: Dalam sebuah pertandingan, pemain sering melakukan kesalahan saat kontrol bola sehingga bola memantul sejauh 2 meter dan direbut lawan. Analisis kesalahan teknis apa yang terjadi pada posisi kaki dan peredaman bola!",
+                key: "Pemain tidak menarik atau mengendurkan kaki saat bola menyentuh permukaan (kaki kaku), sehingga benturan bola menimbulkan reaksi pantulan keras bukannya terhenti."
+            },
+            {
+                id: 4,
+                q: "4. KONDISI FISIK & STRATEGI: Jelaskan pengaruh tingkat kebugaran jasmani (daya tahan cardiorespiratory) terhadap konsentrasi akurasi passing pemain pada 15 menit terakhir babak kedua!",
+                key: "Kelelahan fisik menurunkan pasokan oksigen ke otak dan otot, menyebabkan penurunan koordinasi saraf-otot sehingga kontrol dan akurasi passing menjadi jauh meleset."
+            },
+            {
+                id: 5,
+                q: "5. SOLUSI SPORTIVITAS: Apabila tim Anda sedang tertinggal 0-1 dan pemain lawan sengaja mengulur waktu secara kurang sportif, bagaimana reaksi dan emosi yang harus ditunjukkan oleh seorang atlet berjiwa sportif sesuai arahan Pak JUMADIL?",
+                key: "Tetap tenang, tidak terpancing emosi atau melakukan pelanggaran keras, fokus menjalankan instruksi taktik tim, dan menyerahkan kepemimpinan pertandingan kepada wasit."
+            }
+        ];
+
+        // 5 Evaluation Essay Questions
+        const evalEssayQuestions = [
+            "1. Jelaskan langkah-langkah teknis melakukan passing menggunakan kaki bagian dalam secara runtut mulai dari awalan hingga gerakan lanjutan (follow through)!",
+            "2. Mengapa keselamatan dahi dan pandangan mata sangat penting diperhatikan saat melakukan teknik menyundul bola (heading)?",
+            "3. Bagaimana perbedaan mendasar antara dribbling untuk mengontrol bola di area sempit dengan speed dribbling di lapangan terbuka?",
+            "4. Sebutkan dan jelaskan 3 nilai karakter positif yang dapat dipelajari dari permainan sepak bola dalam kehidupan sehari-hari!",
+            "5. Tuliskan pesan dan masukan Anda mengenai pengalaman belajar materi gerak dasar sepak bola bersama Bapak JUMADIL!"
+        ];
+
+        /* ==========================================================================
+           2. THREE.JS 3D BACKGROUND ANIMATION (SOCCER BALL PARTICLES)
+           ========================================================================== */
+        let scene, camera, renderer, particlesMesh;
+
+        function init3D() {
+            const container = document.getElementById('canvas-container');
+            scene = new THREE.Scene();
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            // Floating Particles Green/Emerald theme
+            const geometry = new THREE.BufferGeometry();
+            const count = 130;
+            const positions = new Float32Array(count * 3);
+            const colors = new Float32Array(count * 3);
+
+            const greenColor = new THREE.Color(0x22c55e);
+            const tealColor = new THREE.Color(0x14b8a6);
+
+            for (let i = 0; i < count * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 15;
+                positions[i + 1] = (Math.random() - 0.5) * 15;
+                positions[i + 2] = (Math.random() - 0.5) * 10;
+
+                const mixedColor = Math.random() > 0.5 ? greenColor : tealColor;
+                colors[i] = mixedColor.r;
+                colors[i + 1] = mixedColor.g;
+                colors[i + 2] = mixedColor.b;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 0.16,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.75
+            });
+
+            particlesMesh = new THREE.Points(geometry, material);
+            scene.add(particlesMesh);
+
+            // Ambient Light
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+            scene.add(ambientLight);
+
+            window.addEventListener('resize', onWindowResize);
+            animate3D();
+        }
+
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            if (particlesMesh) {
+                particlesMesh.rotation.y += 0.0018;
+                particlesMesh.rotation.x += 0.0012;
+            }
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        /* ==========================================================================
+           3. WEB AUDIO API SYNTHESIZER (BGM & SFX OFFLINE)
+           ========================================================================== */
+        let audioCtx = null;
+        let isBgmPlaying = false;
+        let bgmTimer = null;
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        // Play Tone SFX
+        function playSoundEffect(freq, type = 'sine', duration = 0.15) {
+            try {
+                initAudioContext();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                console.log("Audio play prevented");
+            }
+        }
+
+        function playCorrectSFX() {
+            playSoundEffect(523.25, 'triangle', 0.1); // C5
+            setTimeout(() => playSoundEffect(659.25, 'triangle', 0.2), 100); // E5
+        }
+
+        function playWrongSFX() {
+            playSoundEffect(220, 'sawtooth', 0.2); // A3
+        }
+
+        // Cheerful Sports Synthesizer BGM Loop
+        const bgmNotes = [293.66, 349.23, 440.00, 523.25, 440.00, 349.23, 329.63, 392.00, 523.25, 392.00];
+        let bgmIndex = 0;
+
+        function toggleBGM() {
+            initAudioContext();
+            isBgmPlaying = !isBgmPlaying;
+            const btnText = document.getElementById('bgm-text');
+            const btnIcon = document.getElementById('bgm-icon');
+
+            if (isBgmPlaying) {
+                btnText.textContent = "Musik: ON";
+                btnIcon.className = "fa-solid fa-volume-high text-green-600 animate-pulse";
+                startBGMLoop();
+            } else {
+                btnText.textContent = "Musik: OFF";
+                btnIcon.className = "fa-solid fa-music text-green-600";
+                stopBGMLoop();
+            }
+        }
+
+        function startBGMLoop() {
+            if (bgmTimer) clearInterval(bgmTimer);
+            bgmTimer = setInterval(() => {
+                if (!isBgmPlaying) return;
+                const note = bgmNotes[bgmIndex % bgmNotes.length];
+                playSoundEffect(note, 'sine', 0.22);
+                bgmIndex++;
+            }, 320);
+        }
+
+        function stopBGMLoop() {
+            if (bgmTimer) {
+                clearInterval(bgmTimer);
+                bgmTimer = null;
+            }
+        }
+
+        /* ==========================================================================
+           4. NAVIGATION & PAGE CONTROLLER
+           ========================================================================== */
+        function navigateTo(pageNumber) {
+            playSoundEffect(440, 'sine', 0.08);
+
+            // Hide all pages
+            for (let i = 0; i <= 6; i++) {
+                const p = document.getElementById(`page-${i}`);
+                if (p) {
+                    p.classList.add('hidden');
+                    p.classList.remove('flex');
+                }
+            }
+
+            // Show target page
+            const target = document.getElementById(`page-${pageNumber}`);
+            if (target) {
+                target.classList.remove('hidden');
+                target.classList.add('flex');
+            }
+
+            currentPage = pageNumber;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Trigger specific page initializations
+            if (pageNumber === 3) renderSlide(currentSlide);
+            if (pageNumber === 4) initSimVideo();
+        }
+
+        /* ==========================================================================
+           5. PAGE 3: MATERI SLIDE SYSTEM LOGIC
+           ========================================================================== */
+        function renderSlide(index) {
+            const data = slidesData[index];
+            document.getElementById('slide-title').textContent = data.title;
+            document.getElementById('slide-number-badge').textContent = `Slide ${index + 1} dari ${slidesData.length}`;
+
+            // Generate Slide Body HTML
+            const html = `
+                <div class="space-y-4 animate-fade-in">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-green-100 text-green-700 flex items-center justify-center text-xl shadow-inner">
+                            <i class="fa-solid ${data.icon}"></i>
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-800 font-extrabold px-3 py-1 rounded-full text-xs">
+                            ${data.badge}
+                        </span>
+                    </div>
+
+                    <p class="text-slate-700 font-semibold text-sm sm:text-base leading-relaxed bg-green-50/50 p-4 rounded-2xl border border-green-100">
+                        ${data.desc}
+                    </p>
+
+                    <div class="space-y-2">
+                        <h4 class="font-black text-green-800 text-sm">Poin-Poin Utama Pembahasan:</h4>
+                        <ul class="space-y-2">
+                            ${data.points.map(pt => `
+                                <li class="flex items-start gap-2 text-xs sm:text-sm text-slate-600 font-medium bg-white p-2.5 rounded-xl border border-green-200">
+                                    <i class="fa-solid fa-circle-check text-green-600 mt-1"></i>
+                                    <span>${pt}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-green-600 to-emerald-700 text-white p-4 rounded-2xl shadow-md text-xs sm:text-sm font-semibold">
+                        <i class="fa-solid fa-star text-amber-300 mr-1"></i> ${data.summary}
+                    </div>
+                </div>
+            `;
+            document.getElementById('slide-content-area').innerHTML = html;
+
+            // Render Dots
+            const dotsContainer = document.getElementById('slide-dots');
+            dotsContainer.innerHTML = '';
+            slidesData.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.className = `w-3 h-3 rounded-full cursor-pointer transition ${i === index ? 'bg-green-600 scale-125' : 'bg-green-200 hover:bg-green-300'}`;
+                dot.onclick = () => { currentSlide = i; renderSlide(i); };
+                dotsContainer.appendChild(dot);
+            });
+
+            // Disable / Enable buttons
+            document.getElementById('slide-prev-btn').disabled = (index === 0);
+            document.getElementById('slide-prev-btn').style.opacity = (index === 0) ? '0.5' : '1';
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= slidesData.length) currentSlide = slidesData.length - 1;
+            renderSlide(currentSlide);
+        }
+
+        /* ==========================================================================
+           6. PAGE 4: CANVAS ANIMATED VIDEO & SIMULATION TOOL
+           ========================================================================== */
+        let vidCanvas, vidCtx;
+        let isVidPlaying = false;
+        let vidCurrentTime = 0;
+        const vidDuration = 75; // 1 Minute 15 Seconds
+        let vidAnimFrame = null;
+
+        function initSimVideo() {
+            vidCanvas = document.getElementById('video-canvas');
+            if (!vidCanvas) return;
+            vidCtx = vidCanvas.getContext('2d');
+            vidCanvas.width = 640;
+            vidCanvas.height = 360;
+            drawVideoFrame();
+        }
+
+        function toggleSimVideo() {
+            isVidPlaying = !isVidPlaying;
+            const btn = document.getElementById('vid-play-btn');
+            if (isVidPlaying) {
+                btn.innerHTML = `<i class="fa-solid fa-pause"></i>`;
+                runVideoLoop();
+            } else {
+                btn.innerHTML = `<i class="fa-solid fa-play"></i>`;
+                cancelAnimationFrame(vidAnimFrame);
+            }
+        }
+
+        function runVideoLoop() {
+            if (!isVidPlaying) return;
+            vidCurrentTime += 0.05;
+            if (vidCurrentTime >= vidDuration) {
+                vidCurrentTime = 0;
+            }
+            updateVidProgress();
+            drawVideoFrame();
+            vidAnimFrame = requestAnimationFrame(runVideoLoop);
+        }
+
+        function updateVidProgress() {
+            const pct = (vidCurrentTime / vidDuration) * 100;
+            document.getElementById('vid-progress').style.width = `${pct}%`;
+
+            const curMin = String(Math.floor(vidCurrentTime / 60)).padStart(2, '0');
+            const curSec = String(Math.floor(vidCurrentTime % 60)).padStart(2, '0');
+            const durMin = String(Math.floor(vidDuration / 60)).padStart(2, '0');
+            const durSec = String(Math.floor(vidDuration % 60)).padStart(2, '0');
+            document.getElementById('vid-timer').textContent = `${curMin}:${curSec} / ${durMin}:${durSec}`;
+        }
+
+        function seekVideo(e) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            vidCurrentTime = pos * vidDuration;
+            updateVidProgress();
+            drawVideoFrame();
+        }
+
+        function drawVideoFrame() {
+            if (!vidCtx) return;
+            // Clear Frame
+            vidCtx.fillStyle = '#0f172a';
+            vidCtx.fillRect(0, 0, vidCanvas.width, vidCanvas.height);
+
+            // Draw Pitch Scene
+            const t = vidCurrentTime;
+            const grad = vidCtx.createLinearGradient(0, 0, 0, 360);
+            grad.addColorStop(0, '#15803d');
+            grad.addColorStop(1, '#14532d');
+            vidCtx.fillStyle = grad;
+            vidCtx.fillRect(0, 0, 640, 360);
+
+            // White Pitch Lines
+            vidCtx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            vidCtx.lineWidth = 3;
+            vidCtx.beginPath();
+            vidCtx.arc(320, 180, 50, 0, Math.PI * 2);
+            vidCtx.moveTo(320, 0);
+            vidCtx.lineTo(320, 360);
+            vidCtx.stroke();
+
+            // Goal post on the right
+            vidCtx.strokeStyle = '#ffffff';
+            vidCtx.lineWidth = 6;
+            vidCtx.strokeRect(580, 120, 40, 120);
+
+            // Animated Players and Ball
+            const ballX = 100 + (t * 6) % 480;
+            const ballY = 180 + Math.sin(t * 3) * 30;
+
+            // Player 1 (Passer)
+            drawPlayer(100, 180, '#38bdf8', 'P1');
+            // Player 2 (Receiver)
+            drawPlayer(320, 150, '#38bdf8', 'P2');
+            // Goalkeeper
+            drawPlayer(570, 180, '#f59e0b', 'GK');
+
+            // Animated Soccer Ball
+            vidCtx.fillStyle = '#ffffff';
+            vidCtx.beginPath();
+            vidCtx.arc(ballX, ballY, 10, 0, Math.PI * 2);
+            vidCtx.fill();
+            vidCtx.fillStyle = '#000000';
+            vidCtx.beginPath();
+            vidCtx.arc(ballX, ballY, 4, 0, Math.PI * 2);
+            vidCtx.fill();
+
+            // Animated On-screen Subtitles based on timestamp
+            let subText = "Animasi Pembelajaran PJOK: Gerak Dasar Sepak Bola";
+            if (t < 25) subText = "1. PASSING: Umpan akurat menggunakan kaki bagian dalam antar pemain.";
+            else if (t < 50) subText = "2. DRIBBLING & KONTROL: Menguasai bola dengan kontrol lembut dan pergerakan lincah.";
+            else subText = "3. SHOOTING & GOAL: Tembakan akurat menggunakan punggung kaki meluncur ke gawang!";
+
+            vidCtx.fillStyle = 'rgba(0,0,0,0.75)';
+            vidCtx.fillRect(40, 290, 560, 45);
+            vidCtx.fillStyle = '#ffffff';
+            vidCtx.font = 'bold 14px Nunito, sans-serif';
+            vidCtx.textAlign = 'center';
+            vidCtx.fillText(subText, 320, 318);
+        }
+
+        function drawPlayer(x, y, color, label) {
+            vidCtx.fillStyle = color;
+            vidCtx.beginPath();
+            vidCtx.arc(x, y, 16, 0, Math.PI * 2);
+            vidCtx.fill();
+            vidCtx.strokeStyle = '#ffffff';
+            vidCtx.lineWidth = 2;
+            vidCtx.stroke();
+
+            vidCtx.fillStyle = '#ffffff';
+            vidCtx.font = 'bold 10px Fredoka, sans-serif';
+            vidCtx.textAlign = 'center';
+            vidCtx.fillText(label, x, y + 4);
+        }
+
+        // Interactive Simulation Math Update
+        function updateSim() {
+            const angle = parseInt(document.getElementById('sim-angle').value);
+            const power = parseInt(document.getElementById('sim-power').value);
+            const dist = parseInt(document.getElementById('sim-dist').value);
+
+            document.getElementById('val-angle').textContent = `${angle}°`;
+            document.getElementById('val-power').textContent = `${power}%`;
+            document.getElementById('val-dist').textContent = `${dist}m`;
+
+            const statusEl = document.getElementById('sim-status');
+
+            if (angle >= 30 && angle <= 60 && power >= 60 && power <= 85) {
+                statusEl.textContent = "GOAL! Tendangan Tepat Mengarah ke Sudut Atas Gawang!";
+                statusEl.className = "font-black text-base text-green-700";
+            } else if (angle > 60) {
+                statusEl.textContent = "BOLA MELAMBUNG TINGGI! Sudut kaki terlalu menengadah ke atas!";
+                statusEl.className = "font-black text-base text-amber-600";
+            } else if (power < 50) {
+                statusEl.textContent = "TENDANGAN LEMAH! Bola dapat dipotong bek lawan sebelum sampai!";
+                statusEl.className = "font-black text-base text-rose-600";
+            } else {
+                statusEl.textContent = "TENDANGAN MELESET! Bola melebar dari gawang.";
+                statusEl.className = "font-black text-base text-rose-600";
+            }
+        }
+
+        function resetSim() {
+            document.getElementById('sim-angle').value = 45;
+            document.getElementById('sim-power').value = 70;
+            document.getElementById('sim-dist').value = 16;
+            updateSim();
+        }
+
+        /* ==========================================================================
+           7. PAGE 5 & 6: QUESTIONS GENERATOR & SUBMISSION LOGIC
+           ========================================================================== */
+        function initQuestionsUI() {
+            // Render 10 Multiple Choice Questions
+            const pgContainer = document.getElementById('pg-container');
+            pgContainer.innerHTML = questionsPG.map((item, idx) => `
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-green-200 space-y-3 shadow-sm">
+                    <p class="font-bold text-slate-800 text-sm sm:text-base">${item.q}</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        ${item.options.map(opt => `
+                            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-green-50 cursor-pointer transition text-xs font-semibold">
+                                <input type="radio" name="pg-ans-${idx}" value="${opt}" class="accent-green-600">
+                                <span>${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            // Render 5 HOTS Questions
+            const hotsContainer = document.getElementById('hots-container');
+            hotsContainer.innerHTML = questionsHOTS.map((item, idx) => `
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-emerald-200 space-y-3 shadow-sm">
+                    <p class="font-bold text-slate-800 text-sm sm:text-base">${item.q}</p>
+                    <textarea id="hots-ans-${idx}" rows="3" placeholder="Ketikkan analisis taktis kamu di sini..." class="w-full p-3 rounded-xl border border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-xs font-semibold"></textarea>
+                </div>
+            `).join('');
+
+            // Render 5 Evaluasi Essay Questions
+            const evalContainer = document.getElementById('eval-essay-container');
+            evalContainer.innerHTML = evalEssayQuestions.map((qText, idx) => `
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-green-200 space-y-2 shadow-sm">
+                    <p class="font-bold text-slate-800 text-sm">${qText}</p>
+                    <textarea id="eval-ans-${idx}" rows="3" placeholder="Jawaban evaluasi kamu..." class="w-full p-3 rounded-xl border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 text-xs font-semibold"></textarea>
+                </div>
+            `).join('');
+        }
+
+        // Submit Quiz (Halaman 5)
+        function submitQuiz() {
+            const name = document.getElementById('user-name').value.trim();
+            const userClass = document.getElementById('user-class').value;
+
+            if (!name) {
+                showMsgModal("Perhatian", "Silakan isi nama lengkap kamu sebelum mengumpulkan jawaban kuis!", "fa-triangle-exclamation", "text-amber-500");
+                return;
+            }
+
+            let correctCount = 0;
+            const now = new Date().toLocaleString('id-ID');
+
+            // Process PG Questions
+            questionsPG.forEach((qItem, idx) => {
+                const selected = document.querySelector(`input[name="pg-ans-${idx}"]:checked`);
+                const userAns = selected ? selected.value : "Tidak Dijawab";
+                const isCorrect = (userAns === qItem.ans);
+                if (isCorrect) correctCount++;
+
+                const record = {
+                    timestamp: now,
+                    kelas: userClass,
+                    nama: name,
+                    pertanyaan: qItem.q,
+                    jawabanSiswa: userAns,
+                    kunciJawaban: qItem.ans,
+                    status: isCorrect ? "BENAR" : "SALAH",
+                    poin: isCorrect ? 10 : 0
+                };
+                rekapRecords.push(record);
+                sendToWebhook(record);
+            });
+
+            // Process HOTS Questions
+            questionsHOTS.forEach((hItem, idx) => {
+                const ansText = document.getElementById(`hots-ans-${idx}`).value.trim() || "Tidak Dijawab";
+                const record = {
+                    timestamp: now,
+                    kelas: userClass,
+                    nama: name,
+                    pertanyaan: hItem.q,
+                    jawabanSiswa: ansText,
+                    kunciJawaban: hItem.key,
+                    status: "MENUNGGU KOREKSI",
+                    poin: 0
+                };
+                rekapRecords.push(record);
+                sendToWebhook(record);
+            });
+
+            saveRekapLocal();
+            playCorrectSFX();
+            showMsgModal("Kuis Terkirim!", `Selamat ${name}, jawaban kuis PJOK kamu telah berhasil dicatat! Skor Pilihan Ganda: ${correctCount * 10} / 100`, "fa-circle-check", "text-emerald-500");
+            renderRekapTable();
+        }
+
+        // Submit Evaluasi & Refleksi (Halaman 6)
+        function submitEvaluasi() {
+            const name = document.getElementById('eval-name').value.trim() || document.getElementById('user-name').value.trim() || "Siswa Anonymous";
+            const userClass = document.getElementById('eval-class').value.trim() || document.getElementById('user-class').value;
+            const pesan = document.getElementById('pesan-guru').value.trim();
+            const now = new Date().toLocaleString('id-ID');
+
+            // Process 5 Essay Answers
+            evalEssayQuestions.forEach((qText, idx) => {
+                const ansText = document.getElementById(`eval-ans-${idx}`).value.trim() || "Tidak Dijawab";
+                const record = {
+                    timestamp: now,
+                    kelas: userClass,
+                    nama: name,
+                    pertanyaan: `[Evaluasi] ${qText}`,
+                    jawabanSiswa: ansText,
+                    kunciJawaban: "Uraian Refleksi Siswa",
+                    status: "EVALUASI",
+                    poin: 0
+                };
+                rekapRecords.push(record);
+                sendToWebhook(record);
+            });
+
+            // Record Pesan Guru
+            if (pesan) {
+                const recordPesan = {
+                    timestamp: now,
+                    kelas: userClass,
+                    nama: name,
+                    pertanyaan: "PESAN UNTUK GURUKU (JUMADIL)",
+                    jawabanSiswa: pesan,
+                    kunciJawaban: "-",
+                    status: "PESAN",
+                    poin: 0
+                };
+                rekapRecords.push(recordPesan);
+                sendToWebhook(recordPesan);
+            }
+
+            saveRekapLocal();
+            playCorrectSFX();
+            showMsgModal("Evaluasi Selesai!", "Terima kasih telah menyelesaikan evaluasi pembelajaran. Data kamu telah terkirim ke Bapak JUMADIL.", "fa-heart", "text-green-600");
+            renderRekapTable();
+
+            // Redirect back to home page after 2 seconds
+            setTimeout(() => {
+                navigateTo(1);
+            }, 2000);
+        }
+
+        /* ==========================================================================
+           8. REKAP SPREADSHEET & EXPORT SYSTEM (Halaman 8)
+           ========================================================================== */
+        function saveRekapLocal() {
+            localStorage.setItem('pjok_rekap_db', JSON.stringify(rekapRecords));
+        }
+
+        function openRekapModal() {
+            renderRekapTable();
+            document.getElementById('rekap-modal').classList.remove('hidden');
+        }
+
+        function closeRekapModal() {
+            document.getElementById('rekap-modal').classList.add('hidden');
+        }
+
+        function renderRekapTable() {
+            const tbody = document.getElementById('rekap-table-body');
+            tbody.innerHTML = '';
+
+            let correctTotal = 0;
+            let sumPoin = 0;
+            const uniqueStudents = new Set();
+
+            rekapRecords.forEach(rec => {
+                if (rec.status === 'BENAR') correctTotal++;
+                sumPoin += rec.poin;
+                if (rec.nama) uniqueStudents.add(rec.nama);
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-green-50/50 transition";
+                tr.innerHTML = `
+                    <td class="p-2.5 font-mono text-[11px]">${rec.timestamp}</td>
+                    <td class="p-2.5 font-bold">${rec.kelas}</td>
+                    <td class="p-2.5 font-bold text-green-700">${rec.nama}</td>
+                    <td class="p-2.5 max-w-xs truncate" title="${rec.pertanyaan}">${rec.pertanyaan}</td>
+                    <td class="p-2.5 max-w-xs truncate font-semibold" title="${rec.jawabanSiswa}">${rec.jawabanSiswa}</td>
+                    <td class="p-2.5 max-w-xs truncate text-slate-400" title="${rec.kunciJawaban}">${rec.kunciJawaban}</td>
+                    <td class="p-2.5">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold ${rec.status === 'BENAR' ? 'bg-emerald-100 text-emerald-800' : (rec.status === 'SALAH' ? 'bg-rose-100 text-rose-700' : 'bg-teal-100 text-teal-800')}">
+                            ${rec.status}
+                        </span>
+                    </td>
+                    <td class="p-2.5 font-black text-slate-800">${rec.poin}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Update stats
+            document.getElementById('stat-total-act').textContent = rekapRecords.length;
+            document.getElementById('stat-correct-ans').textContent = correctTotal;
+            document.getElementById('stat-student-count').textContent = uniqueStudents.size;
+            document.getElementById('stat-avg-score').textContent = rekapRecords.length ? Math.round(sumPoin / (rekapRecords.length / 10)) : 0;
+            document.getElementById('webhook-url-input').value = webhookScriptURL;
+        }
+
+        // Export Feature 1: UTF-8 BOM CSV File Download
+        function exportToCSV() {
+            if (rekapRecords.length === 0) {
+                showMsgModal("Data Kosong", "Belum ada rekapan jawaban siswa untuk diunduh.", "fa-info", "text-blue-500");
+                return;
+            }
+
+            let csvContent = "\uFEFFWaktu,Kelas,Nama Siswa,Pertanyaan,Jawaban Siswa,Kunci Jawaban,Status,Poin\n";
+
+            rekapRecords.forEach(r => {
+                const row = [
+                    `"${r.timestamp}"`,
+                    `"${r.kelas}"`,
+                    `"${r.nama}"`,
+                    `"${(r.pertanyaan || '').replace(/"/g, '""')}"`,
+                    `"${(r.jawabanSiswa || '').replace(/"/g, '""')}"`,
+                    `"${(r.kunciJawaban || '').replace(/"/g, '""')}"`,
+                    `"${r.status}"`,
+                    `"${r.poin}"`
+                ];
+                csvContent += row.join(",") + "\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Rekap_Nilai_PJOK_Jumadil_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Export Feature 2: Copy Tab-Separated Table to Clipboard
+        function copyTableToClipboard() {
+            if (rekapRecords.length === 0) {
+                showMsgModal("Data Kosong", "Tidak ada data untuk disalin.", "fa-info", "text-blue-500");
+                return;
+            }
+
+            let tsv = "Waktu\tKelas\tNama Siswa\tPertanyaan\tJawaban Siswa\tKunci Jawaban\tStatus\tPoin\n";
+            rekapRecords.forEach(r => {
+                tsv += `${r.timestamp}\t${r.kelas}\t${r.nama}\t${r.pertanyaan}\t${r.jawabanSiswa}\t${r.kunciJawaban}\t${r.status}\t${r.poin}\n`;
+            });
+
+            const tempInput = document.createElement("textarea");
+            tempInput.value = tsv;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            showMsgModal("Berhasil Disalin!", "Tabel berformat TSV telah disalin ke clipboard. Buka Google Spreadsheet atau Excel lalu tekan Ctrl+V!", "fa-copy", "text-teal-600");
+        }
+
+        // Export Feature 3: Auto-Sync Google Apps Script Webhook
+        function saveWebhookURL() {
+            webhookScriptURL = document.getElementById('webhook-url-input').value.trim();
+            localStorage.setItem('pjok_webhook_url', webhookScriptURL);
+            showMsgModal("URL Tersimpan", "Webhook Google Apps Script berhasil dikonfigurasi!", "fa-check", "text-emerald-500");
+        }
+
+        function sendToWebhook(dataRecord) {
+            if (!webhookScriptURL) return;
+            try {
+                fetch(webhookScriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dataRecord)
+                });
+            } catch (err) {
+                console.log("Webhook fail:", err);
+            }
+        }
+
+        function copyAppsScriptCode() {
+            const scriptCode = `function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = JSON.parse(e.postData.contents);
+  sheet.appendRow([
+    data.timestamp,
+    data.kelas,
+    data.nama,
+    data.pertanyaan,
+    data.jawabanSiswa,
+    data.kunciJawaban,
+    data.status,
+    data.poin
+  ]);
+  return ContentService.createTextOutput("Success").setMimeType(ContentService.MimeType.TEXT);
+}`;
+            const tempInput = document.createElement("textarea");
+            tempInput.value = scriptCode;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            showMsgModal("Kode Copied!", "Kode Google Apps Script doPost(e) berhasil disalin! Tempelkan di Extensions -> Apps Script pada Google Sheet milik Pak Jumadil.", "fa-code", "text-green-600");
+        }
+
+        function clearRekapData() {
+            rekapRecords = [];
+            saveRekapLocal();
+            renderRekapTable();
+        }
+
+        // Custom Notification Modal Logic
+        function showMsgModal(title, text, iconClass = "fa-info-circle", iconColor = "text-green-600") {
+            document.getElementById('msg-title').textContent = title;
+            document.getElementById('msg-text').textContent = text;
+            const iconEl = document.getElementById('msg-icon');
+            iconEl.className = `fa-solid ${iconClass} ${iconColor}`;
+            document.getElementById('msg-modal').classList.remove('hidden');
+        }
+
+        function closeMsgModal() {
+            document.getElementById('msg-modal').classList.add('hidden');
+        }
+
+        /* ==========================================================================
+           9. APP INITIALIZATION ON WINDOW LOAD
+           ========================================================================== */
+        window.onload = function () {
+            init3D();
+            initQuestionsUI();
+            updateSim();
+
+            // Auto-rotate PJOK Motivational Quotes on Home Page
+            const quotes = [
+                '"Di dalam tubuh yang sehat terdapat jiwa yang kuat! Terus berlatih, disiplin, dan pantang menyerah di lapangan!"',
+                '"Kemenangan sejati adalah saat kamu mampu melampaui batas dirimu sendiri dan mengutamakan sportivitas!"',
+                '"Latihan fisik hari ini adalah modal stamina dan ketangguhan mentalmu untuk melangkah jauh esok hari!"',
+                '"Kerja sama tim (teamwork) dan saling percaya adalah kunci utama memenangkan pertandingan di lapangan!"'
+            ];
+            let qIdx = 0;
+            setInterval(() => {
+                qIdx = (qIdx + 1) % quotes.length;
+                const qEl = document.getElementById('quote-text');
+                if (qEl) qEl.textContent = quotes[qIdx];
+            }, 6000);
+        };
+    </script>
+</body>
+</html>
